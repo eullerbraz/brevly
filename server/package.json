@@ -1,11 +1,13 @@
 {
-  "name": "brev.ly-server",
+  "name": "brevly-server",
   "version": "1.0.0",
   "description": "A simple URL shortener service built with Node.js.",
-  "main": "index.js",
+  "main": "src/infra/http/server.ts",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/infra/http/server.ts"
+    "dev": "tsx watch --env-file .env src/infra/http/server.ts",
+    "build": "tsup-node",
+    "start": "node dist/infra/http/server.js"
   },
   "keywords": [],
   "author": "",
@@ -14,6 +16,7 @@
   "devDependencies": {
     "@biomejs/biome": "^2.2.4",
     "@types/node": "^24.5.2",
+    "tsup": "^8.5.0",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2"
   },
