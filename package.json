@@ -1,5 +1,9 @@
 {
 	"devDependencies": {
 		"@biomejs/biome": "^2.2.4"
+	},
+	"dependencies": {
+		"@fastify/swagger": "^9.5.1",
+		"@scalar/fastify-api-reference": "^1.35.7"
 	}
 }
