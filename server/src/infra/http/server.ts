@@ -9,6 +9,7 @@ import {
   validatorCompiler,
 } from 'fastify-type-provider-zod';
 import { healthCheckRoute } from './routes/health-check';
+import { linksRoute } from './routes/links';
 
 const PORT = Number(process.env.PORT) || 3333;
 const HOST = process.env.HOST || '0.0.0.0';
@@ -44,7 +45,9 @@ app.register(scalarUI, {
   routePrefix: '/docs',
 });
 
-app.register(healthCheckRoute);
+app.register(healthCheckRoute, { prefix: '/health' });
+
+app.register(linksRoute, { prefix: '/links' });
 
 app.listen({ port: PORT, host: HOST }).then(() => {
   console.log(`HTTP server running on http://${HOST}:${PORT}`);
