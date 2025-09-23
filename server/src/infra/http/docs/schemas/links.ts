@@ -32,11 +32,36 @@ export const createLinkSchema: FastifySchema = {
   },
 };
 
+export const getByIdLinkSchema: FastifySchema = {
+  summary: 'Get a shortened link by id',
+  description: 'Get a shortened link by its id',
+  tags: ['links'],
+  params: linkParams.describe('Link id parameter'),
+  response: {
+    200: z
+      .object({
+        data: linkOutput,
+      })
+      .describe('Link output data'),
+    400: z
+      .object({
+        message: z.string().describe('Error message'),
+        issues: z.array(z.any()).describe('Validation issues'),
+      })
+      .describe('Bad request error'),
+    404: z
+      .object({
+        message: z.string().describe('Error message'),
+      })
+      .describe('Link not found error'),
+  },
+};
+
 export const incrementLinkSchema: FastifySchema = {
   summary: 'Increment access count of a shortened link',
   description: 'Increments the access count of a shortened link by its id',
   tags: ['links'],
-  params: linkParams.describe('Link ID parameter'),
+  params: linkParams.describe('Link id parameter'),
   response: {
     200: z
       .object({
@@ -61,7 +86,7 @@ export const updateLinkSchema: FastifySchema = {
   summary: 'Update a shortened link',
   description: 'Updates a shortened link by its id',
   tags: ['links'],
-  params: linkParams.describe('Link ID parameter'),
+  params: linkParams.describe('Link id parameter'),
   body: linkUpdateInput.describe('Link input data'),
   response: {
     200: z
@@ -92,7 +117,7 @@ export const deleteLinkSchema: FastifySchema = {
   summary: 'Delete a shortened link',
   description: 'Deletes a shortened link by its id',
   tags: ['links'],
-  params: linkParams.describe('Link ID parameter'),
+  params: linkParams.describe('Link id parameter'),
   response: {
     204: z.undefined().describe('No content'),
     400: z

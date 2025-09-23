@@ -24,6 +24,44 @@ const create = async (
   }
 };
 
+const getById = async (id: string): Promise<Either<Error, LinkOutput>> => {
+  try {
+    const [link] = await db
+      .select()
+      .from(schema.links)
+      .where(eq(schema.links.id, id))
+      .limit(1);
+
+    if (!link) {
+      return makeLeft(new Error('Link not found.'));
+    }
+
+    return makeRight(link);
+  } catch (error) {
+    return makeLeft(new Error(String(error)));
+  }
+};
+
+const getByShortUrl = async (
+  shortUrl: string
+): Promise<Either<Error, LinkOutput>> => {
+  try {
+    const [link] = await db
+      .select()
+      .from(schema.links)
+      .where(eq(schema.links.shortUrl, shortUrl))
+      .limit(1);
+
+    if (!link) {
+      return makeLeft(new Error('Link not found.'));
+    }
+
+    return makeRight(link);
+  } catch (error) {
+    return makeLeft(new Error(String(error)));
+  }
+};
+
 const incrementAccessCount = async (
   id: string
 ): Promise<Either<Error, LinkOutput>> => {
@@ -115,6 +153,8 @@ const remove = async (id: string): Promise<Either<Error, undefined>> => {
 
 export const linksRepository = {
   create,
+  getById,
+  getByShortUrl,
   incrementAccessCount,
   update,
   remove,

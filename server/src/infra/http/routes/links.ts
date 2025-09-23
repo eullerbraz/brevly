@@ -4,6 +4,7 @@ import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import {
   createLinkSchema,
   deleteLinkSchema,
+  getByIdLinkSchema,
   incrementLinkSchema,
   updateLinkSchema,
 } from '../docs/schemas/links';
@@ -32,6 +33,28 @@ export const linksRoute: FastifyPluginAsyncZod = async (server) => {
       const link = unwrapEither(result);
 
       return res.status(201).send({ data: link });
+    }
+  );
+
+  server.get(
+    '/:id',
+    {
+      schema: getByIdLinkSchema,
+    },
+    async (req, res) => {
+      const { id } = linkParams.parse(req.params);
+
+      const result = await linksRepository.getById(id);
+
+      if (isLeft(result)) {
+        const error = unwrapEither(result);
+
+        throw new UpdateLinkError(error.message, 404);
+      }
+
+      const link = unwrapEither(result);
+
+      return res.status(200).send({ data: link });
     }
   );
 
