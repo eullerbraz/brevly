@@ -2,7 +2,7 @@ import { db } from '@/infra/db';
 import { schema } from '@/infra/db/schemas';
 import type { LinkInput, LinkOutput } from '@/models/link';
 import { makeLeft, makeRight, type Either } from '@/shared/either';
-import { DrizzleQueryError } from 'drizzle-orm';
+import { DrizzleQueryError, eq } from 'drizzle-orm';
 
 const create = async (
   linkInput: LinkInput
@@ -24,6 +24,27 @@ const create = async (
   }
 };
 
+const remove = async (id: string): Promise<Either<Error, undefined>> => {
+  try {
+    const [link] = await db
+      .select()
+      .from(schema.links)
+      .where(eq(schema.links.id, id))
+      .limit(1);
+
+    if (!link) {
+      return makeLeft(new Error('Link not found.'));
+    }
+
+    await db.delete(schema.links).where(eq(schema.links.id, id));
+
+    return makeRight(undefined);
+  } catch (error) {
+    return makeLeft(new Error(String(error)));
+  }
+};
+
 export const linksRepository = {
   create,
+  remove,
 };

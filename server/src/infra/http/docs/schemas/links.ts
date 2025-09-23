@@ -1,4 +1,4 @@
-import { linkInput, linkOutput } from '@/models/link';
+import { linkInput, linkOutput, linkParams } from '@/models/link';
 import type { FastifySchema } from 'fastify';
 import { z } from 'zod';
 
@@ -39,6 +39,40 @@ export const createLinkSchema: FastifySchema = {
   },
 };
 
+export const deleteLinkSchema: FastifySchema = {
+  summary: 'Delete a shortened link',
+  description: 'Deletes a shortened link by its id',
+  tags: ['links'],
+  params: linkParams.describe('Link ID parameter'),
+  response: {
+    204: z.undefined().describe('No content'),
+    400: z
+      .object({
+        message: z.string().describe('Error message'),
+        issues: z
+          .array(
+            z.object({
+              keyword: z.string(),
+              instancePath: z.string(),
+              schemaPath: z.string(),
+              message: z.string(),
+              params: z.object({
+                format: z.string().describe('Expected format'),
+              }),
+            })
+          )
+          .describe('Validation issues'),
+      })
+      .describe('Bad request error'),
+    404: z
+      .object({
+        message: z.string().describe('Error message'),
+      })
+      .describe('Link not found error'),
+  },
+};
+
 export const docsLinkSchemas = {
   createLinkSchema,
+  deleteLinkSchema,
 };

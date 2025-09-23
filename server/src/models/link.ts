@@ -15,4 +15,8 @@ export const linkOutput = z.object({
   createdAt: z.date(),
 });
 
+export const linkParams = z.object({
+  id: z.uuid(),
+});
+
 export type LinkOutput = z.infer<typeof linkOutput>;
