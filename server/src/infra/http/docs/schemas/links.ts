@@ -32,6 +32,31 @@ export const createLinkSchema: FastifySchema = {
   },
 };
 
+export const incrementLinkSchema: FastifySchema = {
+  summary: 'Increment access count of a shortened link',
+  description: 'Increments the access count of a shortened link by its id',
+  tags: ['links'],
+  params: linkParams.describe('Link ID parameter'),
+  response: {
+    200: z
+      .object({
+        data: linkOutput,
+      })
+      .describe('Incremented link output data'),
+    400: z
+      .object({
+        message: z.string().describe('Error message'),
+        issues: z.array(z.any()).describe('Validation issues'),
+      })
+      .describe('Bad request error'),
+    404: z
+      .object({
+        message: z.string().describe('Error message'),
+      })
+      .describe('Link not found error'),
+  },
+};
+
 export const updateLinkSchema: FastifySchema = {
   summary: 'Update a shortened link',
   description: 'Updates a shortened link by its id',

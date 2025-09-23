@@ -4,6 +4,7 @@ import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import {
   createLinkSchema,
   deleteLinkSchema,
+  incrementLinkSchema,
   updateLinkSchema,
 } from '../docs/schemas/links';
 import { CreateLinkError } from '../errors/create-link';
@@ -31,6 +32,28 @@ export const linksRoute: FastifyPluginAsyncZod = async (server) => {
       const link = unwrapEither(result);
 
       return res.status(201).send({ data: link });
+    }
+  );
+
+  server.post(
+    '/:id/access',
+    {
+      schema: incrementLinkSchema,
+    },
+    async (req, res) => {
+      const { id } = linkParams.parse(req.params);
+
+      const result = await linksRepository.incrementAccessCount(id);
+
+      if (isLeft(result)) {
+        const error = unwrapEither(result);
+
+        throw new UpdateLinkError(error.message, 404);
+      }
+
+      const link = unwrapEither(result);
+
+      return res.status(200).send({ data: link });
     }
   );
 
