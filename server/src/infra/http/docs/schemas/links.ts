@@ -2,6 +2,7 @@ import {
   linkInput,
   linkOutput,
   linkParams,
+  linkShortUrlParams,
   linkUpdateInput,
 } from '@/models/link';
 import type { FastifySchema } from 'fastify';
@@ -29,6 +30,31 @@ export const createLinkSchema: FastifySchema = {
         message: z.string().describe('Error message'),
       })
       .describe('Created link output data'),
+  },
+};
+
+export const getByShortUrlLinkSchema: FastifySchema = {
+  summary: 'Get a shortened link by short url',
+  description: 'Get a shortened link by its short url',
+  tags: ['links'],
+  params: linkShortUrlParams.describe('Link short url parameter'),
+  response: {
+    200: z
+      .object({
+        data: linkOutput,
+      })
+      .describe('Link output data'),
+    400: z
+      .object({
+        message: z.string().describe('Error message'),
+        issues: z.array(z.any()).describe('Validation issues'),
+      })
+      .describe('Bad request error'),
+    404: z
+      .object({
+        message: z.string().describe('Error message'),
+      })
+      .describe('Link not found error'),
   },
 };
 

@@ -1,10 +1,16 @@
-import { linkInput, linkParams, linkUpdateInput } from '@/models/link';
+import {
+  linkInput,
+  linkParams,
+  linkShortUrlParams,
+  linkUpdateInput,
+} from '@/models/link';
 import { isLeft, unwrapEither } from '@/shared/either';
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import {
   createLinkSchema,
   deleteLinkSchema,
   getByIdLinkSchema,
+  getByShortUrlLinkSchema,
   incrementLinkSchema,
   updateLinkSchema,
 } from '../docs/schemas/links';
@@ -33,6 +39,28 @@ export const linksRoute: FastifyPluginAsyncZod = async (server) => {
       const link = unwrapEither(result);
 
       return res.status(201).send({ data: link });
+    }
+  );
+
+  server.get(
+    '/shortUrl/:shortUrl',
+    {
+      schema: getByShortUrlLinkSchema,
+    },
+    async (req, res) => {
+      const { shortUrl } = linkShortUrlParams.parse(req.params);
+
+      const result = await linksRepository.getByShortUrl(shortUrl);
+
+      if (isLeft(result)) {
+        const error = unwrapEither(result);
+
+        throw new UpdateLinkError(error.message, 404);
+      }
+
+      const link = unwrapEither(result);
+
+      return res.status(200).send({ data: link });
     }
   );
 
