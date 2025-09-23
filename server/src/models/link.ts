@@ -15,8 +15,16 @@ export const linkOutput = z.object({
   createdAt: z.date(),
 });
 
+export type LinkOutput = z.infer<typeof linkOutput>;
+
 export const linkParams = z.object({
   id: z.uuid(),
 });
 
-export type LinkOutput = z.infer<typeof linkOutput>;
+export const linkUpdateInput = z.object({
+  originalUrl: z.url().optional(),
+  shortUrl: z.string().optional(),
+  accessCount: z.number().int().optional(),
+});
+
+export type LinkUpdateInput = z.input<typeof linkUpdateInput>;

@@ -1,4 +1,9 @@
-import { linkInput, linkOutput, linkParams } from '@/models/link';
+import {
+  linkInput,
+  linkOutput,
+  linkParams,
+  linkUpdateInput,
+} from '@/models/link';
 import type { FastifySchema } from 'fastify';
 import { z } from 'zod';
 
@@ -16,19 +21,7 @@ export const createLinkSchema: FastifySchema = {
     400: z
       .object({
         message: z.string().describe('Error message'),
-        issues: z
-          .array(
-            z.object({
-              keyword: z.string(),
-              instancePath: z.string(),
-              schemaPath: z.string(),
-              message: z.string(),
-              params: z.object({
-                format: z.string().describe('Expected format'),
-              }),
-            })
-          )
-          .describe('Validation issues'),
+        issues: z.array(z.any()).describe('Validation issues'),
       })
       .describe('Bad request error'),
     409: z
@@ -36,6 +29,37 @@ export const createLinkSchema: FastifySchema = {
         message: z.string().describe('Error message'),
       })
       .describe('Created link output data'),
+  },
+};
+
+export const updateLinkSchema: FastifySchema = {
+  summary: 'Update a shortened link',
+  description: 'Updates a shortened link by its id',
+  tags: ['links'],
+  params: linkParams.describe('Link ID parameter'),
+  body: linkUpdateInput.describe('Link input data'),
+  response: {
+    200: z
+      .object({
+        data: linkOutput,
+      })
+      .describe('Updated link output data'),
+    400: z
+      .object({
+        message: z.string().describe('Error message'),
+        issues: z.array(z.any()).describe('Validation issues'),
+      })
+      .describe('Bad request error'),
+    404: z
+      .object({
+        message: z.string().describe('Error message'),
+      })
+      .describe('Link not found error'),
+    409: z
+      .object({
+        message: z.string().describe('Error message'),
+      })
+      .describe('Updated link output data'),
   },
 };
 
@@ -49,19 +73,7 @@ export const deleteLinkSchema: FastifySchema = {
     400: z
       .object({
         message: z.string().describe('Error message'),
-        issues: z
-          .array(
-            z.object({
-              keyword: z.string(),
-              instancePath: z.string(),
-              schemaPath: z.string(),
-              message: z.string(),
-              params: z.object({
-                format: z.string().describe('Expected format'),
-              }),
-            })
-          )
-          .describe('Validation issues'),
+        issues: z.array(z.any()).describe('Validation issues'),
       })
       .describe('Bad request error'),
     404: z

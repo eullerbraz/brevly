@@ -1,9 +1,14 @@
-import { linkInput, linkParams } from '@/models/link';
+import { linkInput, linkParams, linkUpdateInput } from '@/models/link';
 import { isLeft, unwrapEither } from '@/shared/either';
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
-import { createLinkSchema, deleteLinkSchema } from '../docs/schemas/links';
+import {
+  createLinkSchema,
+  deleteLinkSchema,
+  updateLinkSchema,
+} from '../docs/schemas/links';
 import { CreateLinkError } from '../errors/create-link';
 import { RemoveLinkError } from '../errors/remove-link';
+import { UpdateLinkError } from '../errors/update-link';
 import { linksRepository } from '../repositories/links';
 
 export const linksRoute: FastifyPluginAsyncZod = async (server) => {
@@ -26,6 +31,39 @@ export const linksRoute: FastifyPluginAsyncZod = async (server) => {
       const link = unwrapEither(result);
 
       return res.status(201).send({ data: link });
+    }
+  );
+
+  server.patch(
+    '/:id',
+    {
+      schema: updateLinkSchema,
+    },
+    async (req, res) => {
+      const { id } = linkParams.parse(req.params);
+
+      const { originalUrl, shortUrl, accessCount } = linkUpdateInput.parse(
+        req.body
+      );
+
+      const result = await linksRepository.update(id, {
+        originalUrl,
+        shortUrl,
+        accessCount,
+      });
+
+      if (isLeft(result)) {
+        const error = unwrapEither(result);
+
+        const status =
+          error.message === 'Short URL already exists.' ? 409 : 404;
+
+        throw new UpdateLinkError(error.message, status);
+      }
+
+      const link = unwrapEither(result);
+
+      return res.status(200).send({ data: link });
     }
   );
 
