@@ -8,6 +8,7 @@ import {
   serializerCompiler,
   validatorCompiler,
 } from 'fastify-type-provider-zod';
+import { HttpCustomError } from './errors/http-custom-error';
 import { healthCheckRoute } from './routes/health-check';
 import { linksRoute } from './routes/links';
 
@@ -25,6 +26,10 @@ app.setErrorHandler((error, _req, res) => {
       message: 'Validation error.',
       issues: error.validation,
     });
+  }
+
+  if (error instanceof HttpCustomError) {
+    return res.status(error.statusCode).send({ message: error.message });
   }
 
   console.error(error);
