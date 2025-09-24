@@ -83,6 +83,19 @@ export const getByIdLinkSchema: FastifySchema = {
   },
 };
 
+export const getAllLinkSchema: FastifySchema = {
+  summary: 'Get all shortened links',
+  description: 'Get all shortened links',
+  tags: ['links'],
+  response: {
+    200: z
+      .object({
+        data: z.array(linkOutput),
+      })
+      .describe('All links output data'),
+  },
+};
+
 export const incrementLinkSchema: FastifySchema = {
   summary: 'Increment access count of a shortened link',
   description: 'Increments the access count of a shortened link by its id',

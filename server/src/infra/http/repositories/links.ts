@@ -62,6 +62,16 @@ const getByShortUrl = async (
   }
 };
 
+const getAll = async (): Promise<Either<Error, LinkOutput[]>> => {
+  try {
+    const links = await db.select().from(schema.links).limit(100);
+
+    return makeRight(links);
+  } catch (error) {
+    return makeLeft(new Error(String(error)));
+  }
+};
+
 const incrementAccessCount = async (
   id: string
 ): Promise<Either<Error, LinkOutput>> => {
@@ -155,6 +165,7 @@ export const linksRepository = {
   create,
   getById,
   getByShortUrl,
+  getAll,
   incrementAccessCount,
   update,
   remove,

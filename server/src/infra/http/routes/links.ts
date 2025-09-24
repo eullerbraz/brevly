@@ -9,12 +9,15 @@ import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import {
   createLinkSchema,
   deleteLinkSchema,
+  getAllLinkSchema,
   getByIdLinkSchema,
   getByShortUrlLinkSchema,
   incrementLinkSchema,
   updateLinkSchema,
 } from '../docs/schemas/links';
 import { CreateLinkError } from '../errors/create-link';
+import { GetAllLinkError } from '../errors/get-all-link';
+import { GetLinkError } from '../errors/get-link';
 import { RemoveLinkError } from '../errors/remove-link';
 import { UpdateLinkError } from '../errors/update-link';
 import { linksRepository } from '../repositories/links';
@@ -55,7 +58,7 @@ export const linksRoute: FastifyPluginAsyncZod = async (server) => {
       if (isLeft(result)) {
         const error = unwrapEither(result);
 
-        throw new UpdateLinkError(error.message, 404);
+        throw new GetLinkError(error.message, 404);
       }
 
       const link = unwrapEither(result);
@@ -77,12 +80,32 @@ export const linksRoute: FastifyPluginAsyncZod = async (server) => {
       if (isLeft(result)) {
         const error = unwrapEither(result);
 
-        throw new UpdateLinkError(error.message, 404);
+        throw new GetLinkError(error.message, 404);
       }
 
       const link = unwrapEither(result);
 
       return res.status(200).send({ data: link });
+    }
+  );
+
+  server.get(
+    '/',
+    {
+      schema: getAllLinkSchema,
+    },
+    async (_req, res) => {
+      const result = await linksRepository.getAll();
+
+      if (isLeft(result)) {
+        const error = unwrapEither(result);
+
+        throw new GetAllLinkError(error.message, 500);
+      }
+
+      const links = unwrapEither(result);
+
+      return res.status(200).send({ data: links });
     }
   );
 
