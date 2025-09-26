@@ -33,6 +33,19 @@ export const createLinkSchema: FastifySchema = {
   },
 };
 
+export const exportLinksSchema: FastifySchema = {
+  summary: 'Exports all shortened links',
+  description: 'Exports all shortened links',
+  tags: ['links'],
+  response: {
+    201: z
+      .object({
+        data: z.string().describe('Report url'),
+      })
+      .describe('Report url'),
+  },
+};
+
 export const getByShortUrlLinkSchema: FastifySchema = {
   summary: 'Get a shortened link by short url',
   description: 'Get a shortened link by its short url',

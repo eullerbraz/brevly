@@ -9,6 +9,7 @@ import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod';
 import {
   createLinkSchema,
   deleteLinkSchema,
+  exportLinksSchema,
   getAllLinkSchema,
   getByIdLinkSchema,
   getByShortUrlLinkSchema,
@@ -16,6 +17,7 @@ import {
   updateLinkSchema,
 } from '../docs/schemas/links';
 import { CreateLinkError } from '../errors/create-link';
+import { ExportError } from '../errors/export';
 import { GetAllLinkError } from '../errors/get-all-link';
 import { GetLinkError } from '../errors/get-link';
 import { RemoveLinkError } from '../errors/remove-link';
@@ -42,6 +44,26 @@ export const linksRoute: FastifyPluginAsyncZod = async (server) => {
       const link = unwrapEither(result);
 
       return res.status(201).send({ data: link });
+    }
+  );
+
+  server.post(
+    '/export',
+    {
+      schema: exportLinksSchema,
+    },
+    async (_req, res) => {
+      const result = await linksRepository.exportLinks();
+
+      if (isLeft(result)) {
+        const error = unwrapEither(result);
+
+        throw new ExportError(error.message, 400);
+      }
+
+      const reportUrl = unwrapEither(result);
+
+      return res.status(201).send({ data: reportUrl });
     }
   );
 

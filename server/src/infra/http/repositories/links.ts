@@ -1,8 +1,12 @@
-import { db } from '@/infra/db';
+import { db, pg } from '@/infra/db';
 import { schema } from '@/infra/db/schemas';
+import { uploadFileToStorage } from '@/infra/storage/upload-file-to-storage';
 import type { LinkInput, LinkOutput, LinkUpdateInput } from '@/models/link';
 import { makeLeft, makeRight, type Either } from '@/shared/either';
+import { stringify } from 'csv-stringify';
 import { DrizzleQueryError, eq } from 'drizzle-orm';
+import { PassThrough, Transform } from 'node:stream';
+import { pipeline } from 'node:stream/promises';
 
 const create = async (
   linkInput: LinkInput
@@ -20,6 +24,71 @@ const create = async (
       return makeLeft(error);
     }
 
+    return makeLeft(new Error(String(error)));
+  }
+};
+
+const exportLinks = async (): Promise<Either<Error, string>> => {
+  try {
+    const { sql, params } = db
+      .select({
+        id: schema.links.id,
+        originalUrl: schema.links.originalUrl,
+        shortUrl: schema.links.shortUrl,
+        accessCount: schema.links.accessCount,
+        createdAt: schema.links.createdAt,
+      })
+      .from(schema.links)
+      .toSQL();
+
+    const cursor = pg.unsafe(sql, params as string[]).cursor(2);
+
+    const csvTransform = stringify({
+      delimiter: ',',
+      header: true,
+      columns: [
+        { key: 'id', header: 'ID' },
+        { key: 'original_url', header: 'Original URL' },
+        { key: 'short_url', header: 'Short URL' },
+        { key: 'access_count', header: 'Access Count' },
+        { key: 'created_at', header: 'Created At' },
+      ],
+    });
+
+    const partialTransform = new Transform({
+      objectMode: true,
+      transform(chunks: unknown[], _encoding, callback) {
+        for (const chunk of chunks) {
+          this.push(chunk);
+        }
+
+        callback();
+      },
+    });
+
+    const uploadToStorageStream = new PassThrough();
+
+    const convertToCsvPipeline = pipeline(
+      cursor,
+      partialTransform,
+      csvTransform,
+      uploadToStorageStream
+    );
+
+    const uploadToStorage = uploadFileToStorage({
+      contentType: 'text/csv',
+      folder: 'downloads',
+      fileName: `${new Date().toISOString()}-links.csv`,
+      contentStream: uploadToStorageStream,
+    });
+
+    const [{ url }] = await Promise.all([
+      uploadToStorage,
+      convertToCsvPipeline,
+    ]);
+
+    return makeRight(url);
+  } catch (error) {
     return makeLeft(new Error(String(error)));
   }
 };
@@ -163,6 +232,7 @@ const remove = async (id: string): Promise<Either<Error, undefined>> => {
 
 export const linksRepository = {
   create,
+  exportLinks,
   getById,
   getByShortUrl,
   getAll,
