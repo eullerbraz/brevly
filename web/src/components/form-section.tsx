@@ -11,6 +11,8 @@ export function FormSection({
   const [originalUrl, setOriginalUrl] = useState('');
   const [shortUrl, setShortUrl] = useState('');
 
+  const isButtonEnabled = shortUrl.length > 0 && originalUrl.length > 0;
+
   return (
     <section
       className={twMerge(
@@ -37,14 +39,14 @@ export function FormSection({
             labelText='LINK ENCURTADO'
             type='fixedPlaceholder'
             fixedPrefix='brev.ly/'
-            status='error'
+            status='default'
             errorMessage='Informe uma url minúscula e sem espaço/caracter especial.'
             onChange={(e) => setShortUrl(e.target.value)}
             value={shortUrl}
           />
         </div>
 
-        <Button disabled>Salvar</Button>
+        <Button disabled={!isButtonEnabled}>Salvar</Button>
       </form>
     </section>
   );
