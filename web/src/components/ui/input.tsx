@@ -52,7 +52,8 @@ export function Input({
     <div
       className={twMerge(
         'w-full flex flex-col gap-2 text-xs font-semibold focus-within:text-blue-base',
-        status === 'error' ? 'text-danger' : 'text-gray-500'
+        status === 'error' ? 'text-danger' : 'text-gray-500',
+        className
       )}
     >
       <label htmlFor={id} className=''>

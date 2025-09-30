@@ -32,7 +32,7 @@ export function LinksSection({
       <div className='flex flex-row items-center justify-between md:pr-4 pr-3'>
         <h2 className='text-lg text-gray-600 font-bold truncate'>Meus links</h2>
 
-        <SecondaryButton>
+        <SecondaryButton disabled={!hasLinks}>
           <DownloadSimpleIcon className='size-4' strokeWidth={1.5} />
           <span>Baixar CSV</span>
         </SecondaryButton>

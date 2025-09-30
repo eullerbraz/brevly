@@ -1,16 +1,22 @@
 import { z } from 'zod';
 
 export const linkInput = z.object({
-  originalUrl: z.url(),
-  shortUrl: z.string(),
+  originalUrl: z.url().nonempty(),
+  shortUrl: z
+    .string()
+    .regex(/^[a-zA-Z0-9]+$/)
+    .nonempty(),
 });
 
 export type LinkInput = z.input<typeof linkInput>;
 
 export const linkOutput = z.object({
   id: z.uuid(),
-  originalUrl: z.url(),
-  shortUrl: z.string(),
+  originalUrl: z.url().nonempty(),
+  shortUrl: z
+    .string()
+    .regex(/^[a-zA-Z0-9]+$/)
+    .nonempty(),
   accessCount: z.number().int(),
   createdAt: z.date(),
 });
