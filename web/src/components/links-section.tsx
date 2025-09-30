@@ -2,16 +2,12 @@ import { DownloadSimpleIcon, LinkIcon } from '@phosphor-icons/react';
 import * as ScrollArea from '@radix-ui/react-scroll-area';
 import type { ComponentProps } from 'react';
 import { twMerge } from 'tailwind-merge';
+import type { LinkOutput } from '../models/link';
 import { LinkCard } from './link-card';
 import { SecondaryButton } from './ui/secondary-button';
 
 export type LinksSectionProps = ComponentProps<'section'> & {
-  links: {
-    id: string;
-    originalUrl: string;
-    shortUrl: string;
-    accessCount: number;
-  }[];
+  links: LinkOutput[];
 };
 
 export function LinksSection({

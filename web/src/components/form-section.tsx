@@ -2,19 +2,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useId, type ComponentProps } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { twMerge } from 'tailwind-merge';
-import { z } from 'zod';
+import { linkInput, type LinkInput } from '../models/link';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-
-const inputsFormSchema = z.object({
-  originalUrl: z.url().nonempty(),
-  shortUrl: z
-    .string()
-    .regex(/^[a-zA-Z0-9]+$/)
-    .nonempty(),
-});
-
-type InputsFormSchema = z.input<typeof inputsFormSchema>;
 
 export function FormSection({
   className,
@@ -26,8 +16,8 @@ export function FormSection({
     handleSubmit,
     formState: { errors },
     watch,
-  } = useForm<InputsFormSchema>({
-    resolver: zodResolver(inputsFormSchema),
+  } = useForm<LinkInput>({
+    resolver: zodResolver(linkInput),
     defaultValues: {
       originalUrl: '',
       shortUrl: '',
@@ -36,7 +26,7 @@ export function FormSection({
 
   const { originalUrl, shortUrl } = watch();
 
-  const onSubmit: SubmitHandler<InputsFormSchema> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<LinkInput> = (data) => console.log(data);
 
   const isButtonEnabled = originalUrl.length > 0 && shortUrl.length > 0;
 

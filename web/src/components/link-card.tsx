@@ -1,15 +1,26 @@
 import { CopyIcon, TrashIcon } from '@phosphor-icons/react';
 import type { ComponentProps } from 'react';
+import { toast } from 'sonner';
+import type { LinkOutput } from '../models/link';
 import { SecondaryButton } from './ui/secondary-button';
 
 export type LinksCardProps = ComponentProps<'div'> & {
-  link: {
-    id: string;
-    originalUrl: string;
-    shortUrl: string;
-    accessCount: number;
-  };
+  link: LinkOutput;
 };
+
+function copyLink(link: string) {
+  // lógica do copiar
+  navigator.clipboard.writeText(link);
+
+  toast.info(
+    <>
+      <span className='font-semibold'>Link copiado com sucesso</span>
+      <div className='text-sm'>
+        O link {link} foi copiado para a área de transferência.
+      </div>
+    </>
+  );
+}
 
 export function LinkCard({ link }: LinksCardProps) {
   return (
@@ -37,7 +48,11 @@ export function LinkCard({ link }: LinksCardProps) {
           }`}
         </span>
         <div className='flex flex-row gap-1 items-center text-pink-400'>
-          <SecondaryButton onClick={() => {}}>
+          <SecondaryButton
+            onClick={() => {
+              copyLink(link.shortUrl);
+            }}
+          >
             <CopyIcon className='size-4 text-gray-600' strokeWidth={1.5} />
           </SecondaryButton>
           <SecondaryButton onClick={() => {}}>
