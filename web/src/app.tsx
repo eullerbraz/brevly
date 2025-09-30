@@ -4,10 +4,10 @@ import { LinksSection } from './components/links-section';
 
 export function App() {
   return (
-    <main className='h-dvh bg-gray-200 px-48 py-20 flex flex-row justify-center items-start'>
-      <div className='w-full flex flex-col justify-start items-start gap-8 max-w-6xl'>
+    <main className='h-dvh bg-gray-200 md:px-16 lg:px-48 md:py-20 flex justify-center items-start px-3 py-8'>
+      <div className='w-full flex flex-col justify-start md:items-start items-center gap-8 max-w-6xl'>
         <AppLogo />
-        <div className='w-full flex flex-row gap-5 items-start'>
+        <div className='w-full flex md:flex-row md:gap-5 gap-3 items-start flex-col'>
           <FormSection className='flex-4' />
           <LinksSection
             className='flex-6'

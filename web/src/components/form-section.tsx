@@ -16,7 +16,7 @@ export function FormSection({
   return (
     <section
       className={twMerge(
-        'flex flex-col gap-6 w-full p-8 bg-white rounded-lg',
+        'flex flex-col md:gap-6 w-full md:p-8 bg-white rounded-lg gap-4 p-6',
         className
       )}
       {...props}

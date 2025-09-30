@@ -15,9 +15,9 @@ export function LinkCard({ link }: LinksCardProps) {
   return (
     <div
       key={link.id}
-      className='flex flex-row pt-4 justify-between border-t border-gray-200'
+      className='flex flex-row w-full md:gap-4 md:pt-4 justify-between border-t border-gray-200 pt-3 gap-3'
     >
-      <div className='flex flex-col gap-1 items-start'>
+      <div className='flex flex-col gap-1 items-stretch w-0 grow truncate'>
         <a
           href={`https://${link.shortUrl}`}
           target='_blank'
@@ -30,8 +30,8 @@ export function LinkCard({ link }: LinksCardProps) {
           {link.originalUrl}
         </span>
       </div>
-      <div className='flex flex-row gap-5 items-center'>
-        <span className='text-gray-500 text-sm font-normal'>
+      <div className='flex flex-row gap-5 items-center shrink-0'>
+        <span className='text-gray-500 text-sm font-normal text-nowrap'>
           {`${link.accessCount} ${
             link.accessCount === 1 ? 'acesso' : 'acessos'
           }`}

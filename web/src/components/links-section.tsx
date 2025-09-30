@@ -1,4 +1,5 @@
 import { DownloadSimpleIcon } from '@phosphor-icons/react';
+import * as ScrollArea from '@radix-ui/react-scroll-area';
 import type { ComponentProps } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { LinkCard } from './link-card';
@@ -13,17 +14,21 @@ export type LinksSectionProps = ComponentProps<'section'> & {
   }[];
 };
 
-export function LinksSection({ className, ...props }: LinksSectionProps) {
+export function LinksSection({
+  className,
+  links,
+  ...props
+}: LinksSectionProps) {
   return (
     <section
       className={twMerge(
-        'flex flex-col gap-5 w-full p-8 bg-white rounded-lg',
+        'flex flex-col md:gap-5 w-full md:p-8 md:pr-4 bg-white rounded-lg gap-4 p-6 pr-3',
         className
       )}
       {...props}
     >
-      <div className='flex flex-row items-center justify-between'>
-        <h2 className='text-lg text-gray-600 font-bold'>Meus links</h2>
+      <div className='flex flex-row items-center justify-between md:pr-4 pr-3'>
+        <h2 className='text-lg text-gray-600 font-bold truncate'>Meus links</h2>
 
         <SecondaryButton>
           <DownloadSimpleIcon className='size-4' strokeWidth={1.5} />
@@ -31,11 +36,21 @@ export function LinksSection({ className, ...props }: LinksSectionProps) {
         </SecondaryButton>
       </div>
 
-      <div className='flex flex-col gap-4'>
-        {props.links.map((link) => (
-          <LinkCard key={link.id} link={link} />
-        ))}
-      </div>
+      <ScrollArea.Root className='overflow-hidden'>
+        <ScrollArea.Viewport className='md:max-h-[calc(100dvh-20.75rem)] md:pr-4 flex flex-col gap-4 pr-3 max-h-[calc(100dvh-35rem)]'>
+          <div className='flex flex-col gap-4'>
+            {links.map((link) => (
+              <LinkCard key={link.id} link={link} />
+            ))}
+          </div>
+        </ScrollArea.Viewport>
+        <ScrollArea.Scrollbar
+          className='flex touch-none select-none bg-white p-0.5 transition-colors duration-[160ms] ease-out data-[orientation=horizontal]:h-2.5 data-[orientation=vertical]:w-2.5 data-[orientation=horizontal]:flex-col'
+          orientation='vertical'
+        >
+          <ScrollArea.Thumb className='relative flex-1 rounded-[10px] bg-blue-base before:absolute before:left-1/2 before:top-1/2 before:size-full before:min-h-11 before:min-w-11 before:-translate-x-1/2 before:-translate-y-1/2' />
+        </ScrollArea.Scrollbar>
+      </ScrollArea.Root>
     </section>
   );
 }

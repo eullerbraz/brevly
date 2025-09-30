@@ -18,23 +18,23 @@
   --color-danger: #b12c4d;
 
   --text-xl: 1.5rem;
-  --leading-xl: 2rem;
+  --text-xl--line-height: 2rem;
   --font-weight-xl: 700;
 
   --text-lg: 1.125rem;
-  --leading-lg: 1.5rem;
+  --text-lg--line-height: 1.5rem;
   --font-weight-lg: 700;
 
   --text-md: 0.875rem;
-  --leading-md: 1.125rem;
+  --text-md--line-height: 1.125rem;
   --font-weight-md: 600;
 
   --text-sm: 0.75rem;
-  --leading-sm: 1rem;
+  --text-sm--line-height: 1rem;
   --font-weight-sm: 400;
   --font-weight-sm-semibold: 600;
 
   --text-xs: 0.625rem;
-  --leading-xs: 0.875rem;
+  --text-xs--line-height: 0.875rem;
   --font-weight-xs: 400;
 }
