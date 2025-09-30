@@ -1,6 +1,7 @@
 import { CopyIcon, TrashIcon } from '@phosphor-icons/react';
 import type { ComponentProps } from 'react';
 import { toast } from 'sonner';
+import { env } from '../env';
 import type { LinkOutput } from '../models/link';
 import { SecondaryButton } from './ui/secondary-button';
 
@@ -9,7 +10,6 @@ export type LinksCardProps = ComponentProps<'div'> & {
 };
 
 function copyLink(link: string) {
-  // lógica do copiar
   navigator.clipboard.writeText(link);
 
   toast.info(
@@ -23,6 +23,11 @@ function copyLink(link: string) {
 }
 
 export function LinkCard({ link }: LinksCardProps) {
+  // const shortUrl = `${window.location.origin}/${link.shortUrl}`;
+  const shortUrl = `${env.VITE_FRONTEND_URL}/${link.shortUrl}`;
+
+  const hostname = new URL(shortUrl).hostname;
+
   return (
     <div
       key={link.id}
@@ -30,12 +35,12 @@ export function LinkCard({ link }: LinksCardProps) {
     >
       <div className='flex flex-col gap-1 items-stretch w-0 grow truncate'>
         <a
-          href={`https://${link.shortUrl}`}
+          href={shortUrl}
           target='_blank'
           rel='noopener noreferrer'
           className='text-blue-base text-md font-semibold cursor-pointer truncate'
         >
-          {link.shortUrl}
+          {`${hostname}/${link.shortUrl}`}
         </a>
         <span className='text-gray-500 text-sm font-normal truncate'>
           {link.originalUrl}
