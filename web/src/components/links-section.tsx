@@ -11,9 +11,9 @@ export type LinksSectionProps = ComponentProps<'section'>;
 export function LinksSection({ className, ...props }: LinksSectionProps) {
   const linksMap = useLinks((state) => state.links);
 
-  const links2 = Array.from(linksMap.values()).reverse();
+  const links = Array.from(linksMap.values()).reverse();
 
-  const hasLinks = links2.length > 0;
+  const hasLinks = links.length > 0;
 
   return (
     <section
@@ -43,8 +43,8 @@ export function LinksSection({ className, ...props }: LinksSectionProps) {
             </div>
           ) : (
             <div className='flex flex-col gap-4'>
-              {links2.map((link) => (
-                <LinkCard key={link.id} link={link} />
+              {links.map((link) => (
+                <LinkCard key={link.shortUrl} link={link} />
               ))}
             </div>
           )}

@@ -10,10 +10,12 @@ type LinksStore = {
   links: Map<string, LinkOutput>;
   isSaving: boolean;
   addLink: (linkInput: LinkInput) => Promise<'success' | 'error'>;
+  deleteLink(shortUrl: string): Promise<void>;
 };
 
 type LinksActions = {
   addLink: (linkInput: LinkInput) => Promise<'success' | 'error'>;
+  deleteLink(shortUrl: string): Promise<void>;
 };
 
 enableMapSet();
@@ -57,6 +59,20 @@ export const useLinks = create<LinksStore & LinksActions>()(
       }
     };
 
+    const deleteLink = async (shortUrl: string) => {
+      const linkFound = get().links.get(shortUrl);
+
+      if (!linkFound) {
+        return;
+      }
+
+      await LinksRepository.deleteLinkById(linkFound.id);
+
+      set((state) => {
+        state.links.delete(shortUrl);
+      });
+    };
+
     init();
 
     return {
@@ -64,6 +80,7 @@ export const useLinks = create<LinksStore & LinksActions>()(
       formStatus: 'progress',
       isSaving: false,
       addLink,
+      deleteLink,
     };
   })
 );

@@ -3,6 +3,7 @@ import type { ComponentProps } from 'react';
 import { toast } from 'sonner';
 import { env } from '../env';
 import type { LinkOutput } from '../models/link';
+import { useLinks } from '../store/links-store';
 import { CopyToast } from './toasts/copy-toast';
 import { SecondaryButton } from './ui/secondary-button';
 
@@ -10,26 +11,38 @@ export type LinksCardProps = ComponentProps<'div'> & {
   link: LinkOutput;
 };
 
-function copyLink(link: string) {
-  navigator.clipboard.writeText(link);
-
-  toast.info(<CopyToast link={link} />);
-}
-
 export function LinkCard({ link }: LinksCardProps) {
-  // const shortUrl = `${window.location.origin}/${link.shortUrl}`;
-  const shortUrl = `${env.VITE_FRONTEND_URL}/${link.shortUrl}`;
+  const deleteLink = useLinks((state) => state.deleteLink);
 
-  const hostname = new URL(shortUrl).hostname;
+  // const fullUrl = `${window.location.origin}/${link.shortUrl}`;
+  const fullUrl = `${env.VITE_FRONTEND_URL}/${link.shortUrl}`;
+
+  const handleDelete = () => {
+    const confirmDelete = window.confirm(
+      `Você realmente quer apagar o link ${link.shortUrl}?`
+    );
+
+    if (confirmDelete) {
+      deleteLink(link.shortUrl);
+    }
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(fullUrl);
+
+    toast.info(<CopyToast link={link.shortUrl} />);
+  };
+
+  const hostname = new URL(fullUrl).hostname;
 
   return (
     <div
-      key={link.id}
+      key={link.shortUrl}
       className='flex flex-row w-full md:gap-4 md:pt-4 justify-between border-t border-gray-200 pt-3 gap-3'
     >
       <div className='flex flex-col gap-1 items-stretch w-0 grow truncate'>
         <a
-          href={shortUrl}
+          href={fullUrl}
           target='_blank'
           rel='noopener noreferrer'
           className='text-blue-base text-md font-semibold cursor-pointer truncate'
@@ -47,14 +60,10 @@ export function LinkCard({ link }: LinksCardProps) {
           }`}
         </span>
         <div className='flex flex-row gap-1 items-center text-pink-400'>
-          <SecondaryButton
-            onClick={() => {
-              copyLink(link.shortUrl);
-            }}
-          >
+          <SecondaryButton onClick={handleCopy}>
             <CopyIcon className='size-4 text-gray-600' strokeWidth={1.5} />
           </SecondaryButton>
-          <SecondaryButton onClick={() => {}}>
+          <SecondaryButton onClick={handleDelete}>
             <TrashIcon className='size-4 text-gray-600' strokeWidth={1.5} />
           </SecondaryButton>
         </div>
