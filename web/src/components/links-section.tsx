@@ -2,20 +2,18 @@ import { DownloadSimpleIcon, LinkIcon } from '@phosphor-icons/react';
 import * as ScrollArea from '@radix-ui/react-scroll-area';
 import type { ComponentProps } from 'react';
 import { twMerge } from 'tailwind-merge';
-import type { LinkOutput } from '../models/link';
+import { useLinks } from '../store/links-store';
 import { LinkCard } from './link-card';
 import { SecondaryButton } from './ui/secondary-button';
 
-export type LinksSectionProps = ComponentProps<'section'> & {
-  links: LinkOutput[];
-};
+export type LinksSectionProps = ComponentProps<'section'>;
 
-export function LinksSection({
-  className,
-  links,
-  ...props
-}: LinksSectionProps) {
-  const hasLinks = links.length > 0;
+export function LinksSection({ className, ...props }: LinksSectionProps) {
+  const linksMap = useLinks((state) => state.links);
+
+  const links2 = Array.from(linksMap.values()).reverse();
+
+  const hasLinks = links2.length > 0;
 
   return (
     <section
@@ -45,7 +43,7 @@ export function LinksSection({
             </div>
           ) : (
             <div className='flex flex-col gap-4'>
-              {links.map((link) => (
+              {links2.map((link) => (
                 <LinkCard key={link.id} link={link} />
               ))}
             </div>

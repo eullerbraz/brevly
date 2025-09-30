@@ -1,10 +1,17 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useId, type ComponentProps } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
+import { toast } from 'sonner';
 import { twMerge } from 'tailwind-merge';
 import { linkInput, type LinkInput } from '../models/link';
+import { useLinks } from '../store/links-store';
+import { ErrorToast } from './toasts/error-toast';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
+
+function errorToast() {
+  toast.error(<ErrorToast />);
+}
 
 export function FormSection({
   className,
@@ -16,6 +23,7 @@ export function FormSection({
     handleSubmit,
     formState: { errors },
     watch,
+    reset,
   } = useForm<LinkInput>({
     resolver: zodResolver(linkInput),
     defaultValues: {
@@ -26,7 +34,18 @@ export function FormSection({
 
   const { originalUrl, shortUrl } = watch();
 
-  const onSubmit: SubmitHandler<LinkInput> = (data) => console.log(data);
+  const addLink = useLinks((state) => state.addLink);
+  const isSaving = useLinks((state) => state.isSaving);
+
+  const onSubmit: SubmitHandler<LinkInput> = async (data) => {
+    const formStatus = await addLink(data);
+
+    if (formStatus === 'success') {
+      reset();
+    } else if (formStatus === 'error') {
+      errorToast();
+    }
+  };
 
   const isButtonEnabled = originalUrl.length > 0 && shortUrl.length > 0;
 
@@ -61,7 +80,9 @@ export function FormSection({
           />
         </div>
 
-        <Button disabled={!isButtonEnabled}>Salvar</Button>
+        <Button disabled={!isButtonEnabled}>
+          {isSaving ? 'Salvando...' : 'Salvar'}
+        </Button>
       </form>
     </section>
   );

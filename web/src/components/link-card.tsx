@@ -3,6 +3,7 @@ import type { ComponentProps } from 'react';
 import { toast } from 'sonner';
 import { env } from '../env';
 import type { LinkOutput } from '../models/link';
+import { CopyToast } from './toasts/copy-toast';
 import { SecondaryButton } from './ui/secondary-button';
 
 export type LinksCardProps = ComponentProps<'div'> & {
@@ -12,14 +13,7 @@ export type LinksCardProps = ComponentProps<'div'> & {
 function copyLink(link: string) {
   navigator.clipboard.writeText(link);
 
-  toast.info(
-    <>
-      <span className='font-semibold'>Link copiado com sucesso</span>
-      <div className='text-sm'>
-        O link {link} foi copiado para a área de transferência.
-      </div>
-    </>
-  );
+  toast.info(<CopyToast link={link} />);
 }
 
 export function LinkCard({ link }: LinksCardProps) {

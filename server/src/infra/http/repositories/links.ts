@@ -4,7 +4,7 @@ import { uploadFileToStorage } from '@/infra/storage/upload-file-to-storage';
 import type { LinkInput, LinkOutput, LinkUpdateInput } from '@/models/link';
 import { makeLeft, makeRight, type Either } from '@/shared/either';
 import { stringify } from 'csv-stringify';
-import { DrizzleQueryError, eq } from 'drizzle-orm';
+import { asc, DrizzleQueryError, eq } from 'drizzle-orm';
 import { PassThrough, Transform } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 
@@ -133,7 +133,11 @@ const getByShortUrl = async (
 
 const getAll = async (): Promise<Either<Error, LinkOutput[]>> => {
   try {
-    const links = await db.select().from(schema.links).limit(100);
+    const links = await db
+      .select()
+      .from(schema.links)
+      .orderBy(asc(schema.links.createdAt))
+      .limit(100);
 
     return makeRight(links);
   } catch (error) {

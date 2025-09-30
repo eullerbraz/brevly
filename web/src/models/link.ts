@@ -38,3 +38,11 @@ export const linkUpdateInput = z.object({
 });
 
 export type LinkUpdateInput = z.input<typeof linkUpdateInput>;
+
+export type LinkResponse = {
+  data: LinkOutput;
+};
+
+export type LinksResponse = {
+  data: LinkOutput[];
+};
