@@ -42,7 +42,7 @@ export function LinkCard({ link }: LinksCardProps) {
     >
       <div className='flex flex-col gap-1 items-stretch w-0 grow truncate'>
         <a
-          href={fullUrl}
+          href={`/${link.shortUrl}`}
           target='_blank'
           rel='noopener noreferrer'
           className='text-blue-base text-md font-semibold cursor-pointer truncate'

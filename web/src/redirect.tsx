@@ -1,10 +1,45 @@
-import { useParams } from 'react-router';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router';
 import LogoIcon from '../assets/logo-icon.svg';
+import type { LinkOutput } from './models/link';
+import { useLinks } from './store/links-store';
 
 export function Redirect() {
   const { shortUrl } = useParams();
+  const getLink = useLinks((state) => state.getLink);
+  const incremetAccessCountLink = useLinks(
+    (state) => state.incremetAccessCountLink
+  );
+  const navigate = useNavigate();
+  const [link, setLink] = useState<LinkOutput | null>(null);
 
-  console.log(shortUrl);
+  useEffect(() => {
+    if (!shortUrl) return;
+
+    async function fetchLink() {
+      const link = await getLink(shortUrl);
+
+      setLink(link);
+
+      if (link) {
+        await incremetAccessCountLink(link.shortUrl);
+
+        const bc = new BroadcastChannel('links_channel');
+
+        bc.postMessage({ shortUrl: link.shortUrl, action: 'update_access' });
+
+        bc.close();
+
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+
+        window.location.href = link.originalUrl;
+      } else {
+        navigate('/url/not-found');
+      }
+    }
+
+    fetchLink();
+  }, [shortUrl, getLink, incremetAccessCountLink, navigate]);
 
   return (
     <div className='h-dvh bg-gray-200 flex items-center px-3 md:justify-center'>
@@ -29,7 +64,7 @@ export function Redirect() {
               Não foi redirecionado?{' '}
             </span>
             <a
-              href='/'
+              href={link?.originalUrl}
               className='text-md text-blue-base text-center font-semibold underline hover:text-dark transition truncate'
             >
               Acesse aqui

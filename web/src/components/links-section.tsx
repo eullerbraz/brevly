@@ -1,6 +1,6 @@
 import { DownloadSimpleIcon, LinkIcon } from '@phosphor-icons/react';
 import * as ScrollArea from '@radix-ui/react-scroll-area';
-import type { ComponentProps } from 'react';
+import { useEffect, type ComponentProps } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { useLinks } from '../store/links-store';
 import { LinkCard } from './link-card';
@@ -10,10 +10,22 @@ export type LinksSectionProps = ComponentProps<'section'>;
 
 export function LinksSection({ className, ...props }: LinksSectionProps) {
   const linksMap = useLinks((state) => state.links);
+  const fetchLink = useLinks((state) => state.init);
 
   const links = Array.from(linksMap.values()).reverse();
 
   const hasLinks = links.length > 0;
+
+  useEffect(() => {
+    const bc = new BroadcastChannel('links_channel');
+    bc.onmessage = (event) => {
+      if (event.data.action === 'update_access') {
+        fetchLink();
+      }
+    };
+
+    return () => bc.close();
+  }, [fetchLink]);
 
   return (
     <section
