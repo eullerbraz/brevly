@@ -36,12 +36,12 @@ export function LinkCard({ link }: LinksCardProps) {
             link.accessCount === 1 ? 'acesso' : 'acessos'
           }`}
         </span>
-        <div className='flex flex-row gap-1 items-center'>
+        <div className='flex flex-row gap-1 items-center text-pink-400'>
           <SecondaryButton onClick={() => {}}>
-            <CopyIcon className='size-4' strokeWidth={1.5} />
+            <CopyIcon className='size-4 text-gray-600' strokeWidth={1.5} />
           </SecondaryButton>
           <SecondaryButton onClick={() => {}}>
-            <TrashIcon className='size-4' strokeWidth={1.5} />
+            <TrashIcon className='size-4 text-gray-600' strokeWidth={1.5} />
           </SecondaryButton>
         </div>
       </div>

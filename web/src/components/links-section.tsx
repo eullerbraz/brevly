@@ -1,4 +1,4 @@
-import { DownloadSimpleIcon } from '@phosphor-icons/react';
+import { DownloadSimpleIcon, LinkIcon } from '@phosphor-icons/react';
 import * as ScrollArea from '@radix-ui/react-scroll-area';
 import type { ComponentProps } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -19,6 +19,8 @@ export function LinksSection({
   links,
   ...props
 }: LinksSectionProps) {
+  const hasLinks = links.length > 0;
+
   return (
     <section
       className={twMerge(
@@ -38,11 +40,20 @@ export function LinksSection({
 
       <ScrollArea.Root className='overflow-hidden'>
         <ScrollArea.Viewport className='md:max-h-[calc(100dvh-20.75rem)] md:pr-4 flex flex-col gap-4 pr-3 max-h-[calc(100dvh-35rem)]'>
-          <div className='flex flex-col gap-4'>
-            {links.map((link) => (
-              <LinkCard key={link.id} link={link} />
-            ))}
-          </div>
+          {!hasLinks ? (
+            <div className='flex flex-col gap-3 py-8 items-center justify-center border-t border-gray-200'>
+              <LinkIcon className='size-8 text-gray-400' strokeWidth={1.5} />
+              <span className='text-xs text-gray-400 font-semibold text-center'>
+                AINDA NÃO EXISTEM LINKS CADASTRADOS
+              </span>
+            </div>
+          ) : (
+            <div className='flex flex-col gap-4'>
+              {links.map((link) => (
+                <LinkCard key={link.id} link={link} />
+              ))}
+            </div>
+          )}
         </ScrollArea.Viewport>
         <ScrollArea.Scrollbar
           className='flex touch-none select-none bg-white p-0.5 transition-colors duration-[160ms] ease-out data-[orientation=horizontal]:h-2.5 data-[orientation=vertical]:w-2.5 data-[orientation=horizontal]:flex-col'
