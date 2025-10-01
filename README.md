@@ -33,7 +33,7 @@ Para instalar o projeto, siga os seguintes passos:
 
 Para utilizar o encurtador de URL, faça o seguinte:
 
-1. Acesse o projeto em `http://localhost:5173``.
+1. Acesse o projeto em `http://localhost:5173`.
 2. Insira a URL que deseja encurtar no formulário.
 3. Clique no botão "Salvar".
 4. O link encurtado será exibido na página.
