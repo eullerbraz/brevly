@@ -26,7 +26,7 @@ Para instalar o projeto, siga os seguintes passos:
 2. Instale as dependências do projeto com o comando `pnpm install`.
 3. Crie um arquivo `.env` com as variáveis de ambiente necessárias para o projeto.
 4. Inicie o servidor do back-end com o comando `cd server && pnpm run dev`.
-5. Inicie o servidor do front-end com o comando `cd web && npm run dev`.
+5. Inicie o servidor do front-end com o comando `cd web && pnpm run dev`.
 6. Acesse o projeto em `http://localhost:5173`.
 
 ## Uso
