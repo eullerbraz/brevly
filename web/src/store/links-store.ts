@@ -9,6 +9,7 @@ import * as LinksRepository from '../repositories/link-repository';
 type LinksStore = {
   links: Map<string, LinkOutput>;
   isSaving: boolean;
+  isLoading: boolean;
   init: () => Promise<void>;
   addLink: (linkInput: LinkInput) => Promise<'success' | 'error'>;
   getLink(shortUrl?: string): Promise<LinkOutput | null>;
@@ -33,6 +34,7 @@ export const useLinks = create<LinksStore & LinksActions>()(
 
       set((state) => {
         state.links = new Map(links.map((link) => [link.shortUrl, link]));
+        state.isLoading = false;
       });
     };
 
@@ -123,6 +125,7 @@ export const useLinks = create<LinksStore & LinksActions>()(
       links: new Map(),
       formStatus: 'progress',
       isSaving: false,
+      isLoading: true,
       init,
       addLink,
       getLink,

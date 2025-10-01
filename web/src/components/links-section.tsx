@@ -1,4 +1,8 @@
-import { DownloadSimpleIcon, LinkIcon } from '@phosphor-icons/react';
+import {
+  DownloadSimpleIcon,
+  LinkIcon,
+  SpinnerIcon,
+} from '@phosphor-icons/react';
 import * as ScrollArea from '@radix-ui/react-scroll-area';
 import { useEffect, type ComponentProps } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -10,6 +14,7 @@ export type LinksSectionProps = ComponentProps<'section'>;
 
 export function LinksSection({ className, ...props }: LinksSectionProps) {
   const linksMap = useLinks((state) => state.links);
+  const isLoading = useLinks((state) => state.isLoading);
   const fetchLink = useLinks((state) => state.init);
 
   const links = Array.from(linksMap.values()).reverse();
@@ -30,11 +35,15 @@ export function LinksSection({ className, ...props }: LinksSectionProps) {
   return (
     <section
       className={twMerge(
-        'flex flex-col md:gap-5 w-full md:p-8 md:pr-4 bg-white rounded-lg gap-4 p-6 pr-3',
+        'flex flex-col md:gap-5 w-full md:p-8 md:pr-4 bg-white rounded-lg gap-4 p-6 pr-3 relative overflow-hidden',
         className
       )}
       {...props}
     >
+      {isLoading && (
+        <div className='absolute top-0 left-0 w-1/4 h-1 bg-blue-base rounded-t animate-loadingBarMove loading-bar' />
+      )}
+
       <div className='flex flex-row items-center justify-between md:pr-4 pr-3'>
         <h2 className='text-lg text-gray-600 font-bold truncate'>Meus links</h2>
 
@@ -46,7 +55,14 @@ export function LinksSection({ className, ...props }: LinksSectionProps) {
 
       <ScrollArea.Root className='overflow-hidden'>
         <ScrollArea.Viewport className='md:max-h-[calc(100dvh-20.75rem)] md:pr-4 flex flex-col gap-4 pr-3 max-h-[calc(100dvh-35rem)]'>
-          {!hasLinks ? (
+          {isLoading ? (
+            <div className='flex flex-col gap-3 py-8 items-center justify-center border-t border-gray-200'>
+              <SpinnerIcon className='size-8 text-gray-400' strokeWidth={1.5} />
+              <span className='text-xs text-gray-400 font-semibold text-center'>
+                CARREGANDO LINKS...
+              </span>
+            </div>
+          ) : !hasLinks ? (
             <div className='flex flex-col gap-3 py-8 items-center justify-center border-t border-gray-200'>
               <LinkIcon className='size-8 text-gray-400' strokeWidth={1.5} />
               <span className='text-xs text-gray-400 font-semibold text-center'>

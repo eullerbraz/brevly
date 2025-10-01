@@ -38,3 +38,21 @@
   --text-xs--line-height: 0.875rem;
   --font-weight-xs: 400;
 }
+
+@keyframes loadingBarMove {
+  0% {
+    left: -25%;
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    opacity: 0.7;
+  }
+}
+
+.loading-bar {
+  animation: loadingBarMove 1s infinite ease-in-out;
+}
