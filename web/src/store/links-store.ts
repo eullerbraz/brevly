@@ -10,11 +10,14 @@ type LinksStore = {
   links: Map<string, LinkOutput>;
   isSaving: boolean;
   isLoading: boolean;
+  creatingReport: boolean;
+  reportUrl?: string;
   init: () => Promise<void>;
   addLink: (linkInput: LinkInput) => Promise<'success' | 'error'>;
   getLink(shortUrl?: string): Promise<LinkOutput | null>;
   incremetAccessCountLink(shortUrl?: string): Promise<LinkOutput | null>;
   deleteLink(shortUrl: string): Promise<void>;
+  exportLinks(): Promise<string | null>;
 };
 
 type LinksActions = {
@@ -23,6 +26,7 @@ type LinksActions = {
   getLink(shortUrl?: string): Promise<LinkOutput | null>;
   incremetAccessCountLink(shortUrl?: string): Promise<LinkOutput | null>;
   deleteLink(shortUrl?: string): Promise<void>;
+  exportLinks(): Promise<string | null>;
 };
 
 enableMapSet();
@@ -119,6 +123,25 @@ export const useLinks = create<LinksStore & LinksActions>()(
       });
     };
 
+    const exportLinks = async () => {
+      try {
+        set((state) => {
+          state.creatingReport = true;
+        });
+
+        const reportUrl = await LinksRepository.exportLinks();
+
+        set((state) => {
+          state.creatingReport = false;
+          state.reportUrl = reportUrl;
+        });
+
+        return reportUrl;
+      } catch (_e) {
+        return null;
+      }
+    };
+
     init();
 
     return {
@@ -126,11 +149,13 @@ export const useLinks = create<LinksStore & LinksActions>()(
       formStatus: 'progress',
       isSaving: false,
       isLoading: true,
+      creatingReport: false,
       init,
       addLink,
       getLink,
       incremetAccessCountLink,
       deleteLink,
+      exportLinks,
     };
   })
 );

@@ -4,6 +4,7 @@ import type {
   LinkInput,
   LinkOutput,
   LinkResponse,
+  LinksExportResponse,
   LinksResponse,
 } from '../models/link';
 
@@ -59,6 +60,16 @@ export const deleteLinkById = async (id: string): Promise<LinkOutput> => {
   const {
     data: { data },
   } = await axios.delete<LinkResponse>(`${env.VITE_BACKEND_URL}/links/${id}`);
+
+  return data;
+};
+
+export const exportLinks = async (): Promise<string> => {
+  const {
+    data: { data },
+  } = await axios.post<LinksExportResponse>(
+    `${env.VITE_BACKEND_URL}/links/export`
+  );
 
   return data;
 };

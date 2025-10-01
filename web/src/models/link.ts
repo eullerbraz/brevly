@@ -39,6 +39,10 @@ export const linkUpdateInput = z.object({
 
 export type LinkUpdateInput = z.input<typeof linkUpdateInput>;
 
+export type LinksExportResponse = {
+  data: string;
+};
+
 export type LinkResponse = {
   data: LinkOutput;
 };

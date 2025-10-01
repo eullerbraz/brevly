@@ -16,6 +16,9 @@ export function LinksSection({ className, ...props }: LinksSectionProps) {
   const linksMap = useLinks((state) => state.links);
   const isLoading = useLinks((state) => state.isLoading);
   const fetchLink = useLinks((state) => state.init);
+  const exportLinks = useLinks((state) => state.exportLinks);
+  const reportUrl = useLinks((state) => state.reportUrl);
+  const creatingReport = useLinks((state) => state.creatingReport);
 
   const links = Array.from(linksMap.values()).reverse();
 
@@ -32,6 +35,12 @@ export function LinksSection({ className, ...props }: LinksSectionProps) {
     return () => bc.close();
   }, [fetchLink]);
 
+  useEffect(() => {
+    if (reportUrl) {
+      window.open(reportUrl, '_blank');
+    }
+  }, [reportUrl]);
+
   return (
     <section
       className={twMerge(
@@ -47,8 +56,15 @@ export function LinksSection({ className, ...props }: LinksSectionProps) {
       <div className='flex flex-row items-center justify-between md:pr-4 pr-3'>
         <h2 className='text-lg text-gray-600 font-bold truncate'>Meus links</h2>
 
-        <SecondaryButton disabled={!hasLinks}>
-          <DownloadSimpleIcon className='size-4' strokeWidth={1.5} />
+        <SecondaryButton
+          disabled={!hasLinks || creatingReport}
+          onClick={exportLinks}
+        >
+          {creatingReport ? (
+            <SpinnerIcon className='size-4 animate-spin' strokeWidth={1.5} />
+          ) : (
+            <DownloadSimpleIcon className='size-4' strokeWidth={1.5} />
+          )}
           <span>Baixar CSV</span>
         </SecondaryButton>
       </div>
@@ -57,7 +73,10 @@ export function LinksSection({ className, ...props }: LinksSectionProps) {
         <ScrollArea.Viewport className='md:max-h-[calc(100dvh-20.75rem)] md:pr-4 flex flex-col gap-4 pr-3 max-h-[calc(100dvh-35rem)]'>
           {isLoading ? (
             <div className='flex flex-col gap-3 py-8 items-center justify-center border-t border-gray-200'>
-              <SpinnerIcon className='size-8 text-gray-400' strokeWidth={1.5} />
+              <SpinnerIcon
+                className='size-8 text-gray-400 animate-spin'
+                strokeWidth={1.5}
+              />
               <span className='text-xs text-gray-400 font-semibold text-center'>
                 CARREGANDO LINKS...
               </span>
